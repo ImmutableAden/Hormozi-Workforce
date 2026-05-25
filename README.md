@@ -74,9 +74,24 @@ The Triage prompt went through four iterations driven by structured eval failure
 | **v1** | Initial Constraint Hierarchy with soft "always check upstream first" guidance | 18/25 (72%) — 1 misroute, 2 infrastructure failures | Missed Retention-disguised-as-Leads (0/5 on that case) |
 | **v2** | Added "anti-pattern checklist" with explicit override-up signals | 20/25 = 80% but Direct-Sales regressed to 1/5 | Over-overrode to Offer when stay-put-relevant evidence existed |
 | **v3** | Added "stay-put signals" as counterweights to override-up triggers | 22/25 = 88% — all 5 routing decisions correct | Hit the 88% target; held under knowledge-base attachment |
-| **v4** | Codex-driven fixes: tightened "no marketing engine" rule, added null-signal handling, soften proposal-to-close, ICP awareness + 6th specialist, model → Sonnet 4.6, autonomy → 5 | 8-case eval (run TBD) | Adds 3 adversarial cases Codex constructed |
+| **v4** | Codex-driven fixes: tightened "no marketing engine" rule, added null-signal handling, soften proposal-to-close, ICP awareness + 6th specialist, model → Sonnet 4.6, autonomy → 5 | 16/20 = 80% on graded cases (4 of 8); 4 cases hit Relevance AI infrastructure errors | Adds 3 adversarial cases Codex constructed; one known regression on Direct-Sales (ICP override over-fired) |
 
 This isn't "I broke it twice then fixed it." It's **failure-mode hardening** — adversarial evals around common GTM misdiagnoses, with each iteration adding a specific counter-pattern.
+
+### v5 honest retrospective
+
+The v5 build (the one this repo reflects) has a known regression:
+
+- **Direct-Sales case dropped from 4/5 (v3) → 1/5 (v5).** The new ICP override in Triage v4 fires too aggressively on "we'll build it ourselves" without requiring the prospect to name an explicit segment. The workforce's *reasoning* is defensible (Codex's review specifically warned this signal is often ICP-related), but the eval rule expected Sales routing.
+- **Documented fix path:** tighten the ICP override in Triage v5+ to require explicit segment naming. Codex-B (which has explicit "enterprise security teams" naming) would still route to ICP correctly; Direct-Sales (which doesn't name a segment) would stay with Sales.
+
+This is the exact v1 → v2 regression pattern repeating: every new diagnostic rule has a price somewhere else. The honest engineering response is to keep tightening with adversarial evals, not pretend the rule is universally right.
+
+### What graded cleanly in v5
+
+- **Offer-as-Sales (DEMO case): 5/5 ✅** — the most important case held
+- **Direct-Pricing: 5/5 ✅** — improved from 4/5 in v3 (Sonnet upgrade helped)
+- **Codex-C (new adversarial — Delivery disguised as Pricing): 5/5 ✅** — proves the new Delivery-disguised-as-Pricing override works as designed
 
 See [`docs/codex-review/synthesis.md`](docs/codex-review/synthesis.md) for the cross-model second-opinion review that drove v4.
 
