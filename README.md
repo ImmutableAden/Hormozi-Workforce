@@ -51,7 +51,7 @@ The workforce diagnoses an **Offer** constraint (Perceived Likelihood gap on the
 **8 agents:**
 - **Triage** (hub, Sonnet 4.6) — diagnoses which constraint level matters most
 - **6 specialists** (each with a domain knowledge base attached as a `tool`):
-  - ICP / Positioning (meta-level, added v4)
+  - ICP / Positioning (meta-level, added v5)
   - Offer (Value Equation, Grand Slam construction)
   - Leads (Core Four, lead magnets, hooks)
   - Sales (CLOSER framework, six-objection schema, scripts)
@@ -59,7 +59,7 @@ The workforce diagnoses an **Offer** constraint (Perceived Likelihood gap on the
   - Pricing (10 Instant Profit Plays, RAISE framework)
 - **Synthesizer** — wraps the specialist's brief with cross-level stress tests
 
-**Knowledge bases:** Each specialist has a domain knowledge set of H2-chunked passages from Alex Hormozi's source material (`$100M Offers`, `$100M Leads`, the Lead Playbooks collection). Specialists `ALWAYS` run at least one knowledge search before producing a diagnosis. Total: ~88 source-text rows across 6 sets.
+**Knowledge bases:** Each specialist has a domain knowledge set of H2-chunked passages from Alex Hormozi's source material (`$100M Offers`, `$100M Leads`, the Lead Playbooks collection). Specialists `ALWAYS` run at least one knowledge search before producing a diagnosis. Total: ~85 source-text rows across 6 sets.
 
 **Threading:** Specialists run in `always-create-new` threads. Triage extracts the specialist's response text and quotes it verbatim in its final message, which is what the Synthesizer reads.
 
@@ -67,14 +67,15 @@ The workforce diagnoses an **Offer** constraint (Perceived Likelihood gap on the
 
 ## The eval-driven iteration story
 
-The Triage prompt went through four iterations driven by structured eval failures.
+The workforce went through five iterations driven by structured eval failures. Full version history in [`CHANGELOG.md`](CHANGELOG.md).
 
 | Version | Change | Eval result | What it broke / fixed |
 |---|---|---|---|
 | **v1** | Initial Constraint Hierarchy with soft "always check upstream first" guidance | 18/25 (72%) — 1 misroute, 2 infrastructure failures | Missed Retention-disguised-as-Leads (0/5 on that case) |
 | **v2** | Added "anti-pattern checklist" with explicit override-up signals | 20/25 = 80% but Direct-Sales regressed to 1/5 | Over-overrode to Offer when stay-put-relevant evidence existed |
-| **v3** | Added "stay-put signals" as counterweights to override-up triggers | 22/25 = 88% — all 5 routing decisions correct | Hit the 88% target; held under knowledge-base attachment |
-| **v4** | Codex-driven fixes: tightened "no marketing engine" rule, added null-signal handling, soften proposal-to-close, ICP awareness + 6th specialist, model → Sonnet 4.6, autonomy → 5 | 16/20 = 80% on graded cases (4 of 8); 4 cases hit Relevance AI infrastructure errors | Adds 3 adversarial cases Codex constructed; one known regression on Direct-Sales (ICP override over-fired) |
+| **v3** | Added "stay-put signals" as counterweights to override-up triggers | 22/25 = 88% — all 5 routing decisions correct | Hit the 88% target |
+| **v4** | Attached domain knowledge sets to all 5 specialists as `usage_type: tool` | 22/25 = 88% — held with no regression | Confirmed knowledge attachment doesn't degrade routing |
+| **v5** | Codex-driven fixes: tightened "no marketing engine" rule, added null-signal handling, soften proposal-to-close, ICP awareness + 6th specialist, model → Sonnet 4.6, autonomy → 5 | 16/20 = 80% on graded cases (4 of 8); 4 cases hit Relevance AI infrastructure errors | Adds 3 adversarial cases Codex constructed; one known regression on Direct-Sales (ICP override over-fired) |
 
 This isn't "I broke it twice then fixed it." It's **failure-mode hardening** — adversarial evals around common GTM misdiagnoses, with each iteration adding a specific counter-pattern.
 
@@ -93,7 +94,7 @@ This is the exact v1 → v2 regression pattern repeating: every new diagnostic r
 - **Direct-Pricing: 5/5 ✅** — improved from 4/5 in v3 (Sonnet upgrade helped)
 - **Codex-C (new adversarial — Delivery disguised as Pricing): 5/5 ✅** — proves the new Delivery-disguised-as-Pricing override works as designed
 
-See [`docs/codex-review/synthesis.md`](docs/codex-review/synthesis.md) for the cross-model second-opinion review that drove v4.
+See [`docs/codex-review/synthesis.md`](docs/codex-review/synthesis.md) for the cross-model second-opinion review that drove v5.
 
 ---
 
@@ -102,11 +103,12 @@ See [`docs/codex-review/synthesis.md`](docs/codex-review/synthesis.md) for the c
 ```
 .
 ├── README.md                          # This file
+├── CHANGELOG.md                       # Version history (v1 → v5)
 ├── .gitignore
 ├── workforce/                         # Source of truth for the build
 │   ├── agents/                        # 8 agent system prompts
-│   │   ├── 00-icp-positioning-specialist.md   (meta-level, added v4)
-│   │   ├── 01-triage.md               (Sonnet 4.6, v4 prompt)
+│   │   ├── 00-icp-positioning-specialist.md   (meta-level, added v5)
+│   │   ├── 01-triage.md               (Sonnet 4.6, v5 prompt)
 │   │   ├── 02-offer-specialist.md
 │   │   ├── 03-leads-specialist.md
 │   │   ├── 04-sales-specialist.md
@@ -121,9 +123,9 @@ See [`docs/codex-review/synthesis.md`](docs/codex-review/synthesis.md) for the c
 │   │   └── input.md
 │   ├── agent-ids.md                   # Live Relevance AI agent UUIDs
 │   ├── eval-ids.md                    # Live eval test set IDs + version history
-│   └── loom-script.md                 # 5-minute demo script with Codex-informed framing
+│   └── loom-script.md                 # 5-minute demo script ([open](workforce/loom-script.md))
 └── docs/
-    └── codex-review/                  # Cross-model second-opinion review (drove v4)
+    └── codex-review/                  # Cross-model second-opinion review (drove v5)
         ├── synthesis.md               # The cross-cutting writeup with action items
         ├── triage-challenge.txt       # Raw Codex Consult 1 output
         ├── architecture-challenge.txt # Raw Codex Consult 2 output

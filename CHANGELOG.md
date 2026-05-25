@@ -2,7 +2,7 @@
 
 All notable changes to the Hormozi GTM Strategist workforce.
 
-## [v4 / v5] — 2026-05-25 — Codex-driven hardening
+## [v5] — 2026-05-25 — Codex-driven hardening
 
 Cross-model adversarial review (OpenAI Codex CLI, three independent consults: Triage challenge, architecture challenge, bootcamp-narrative review) drove a substantial rewrite.
 
@@ -24,15 +24,49 @@ Cross-model adversarial review (OpenAI Codex CLI, three independent consults: Tr
 - **All agents: `autonomy_limit: 3 → 5`.** Codex flagged 3 as too tight for Triage's route + execute + quote-back sequence; specialists now have headroom for knowledge search + diagnosis.
 - **Tightened "no marketing engine" stay-put rule.** Now gated to early-stage companies (`<2 years old OR <50 customers`). Prevents the false-positive on mature companies with leaky retention masquerading as Leads gaps.
 - **Softened the proposal-to-close → Sales stay-put rule.** v3 was too confident; v4 acknowledges enterprise proposal-to-close failures can have non-Sales root causes (security review, economic buyer access, business case construction).
-- **Diagnostic rule less absolutist.** v3's "always check upstream first" reframed as a strong prior, not an iron law. v4 explicitly notes the hierarchy is not perfectly linear in enterprise B2B SaaS.
+- **Diagnostic rule less absolutist.** v3's "always check upstream first" reframed as a strong prior, not an iron law. v5 explicitly notes the hierarchy is not perfectly linear in enterprise B2B SaaS.
 
-### Known limitations (NOT fixed in v4)
+### Eval results
+
+Graded 4 of 8 cases (4 hit Relevance AI infrastructure errors and couldn't be re-run cleanly before wrap-up):
+
+| Test case | v3 result | v5 result | Notes |
+|---|---|---|---|
+| Offer-as-Sales (DEMO) | 4/5 | **5/5 ✅** | Sonnet upgrade lifted to clean 5/5 |
+| Direct-Pricing | 4/5 | **5/5 ✅** | Lifted to clean 5/5 (cross-level stress test now passes) |
+| Codex-C (Delivery → Retention) | N/A | **5/5 ✅** | NEW adversarial case — Delivery-disguised-as-Pricing override worked as designed |
+| Direct-Sales | 4/5 | **1/5 ❌** | REGRESSION — Triage v4 ICP override fired too aggressively on "we'll build it ourselves" |
+
+**Graded: 16/20 = 80%** across 4 of 8 cases. Eval batch IDs: `801ee43a-14f9-488c-9a11-88b91682f986` (initial), `43b32370-5314-4157-a8b8-9c2b76ef1691` (retry).
+
+**Direct-Sales regression:** The eval prompt has both Sales-stay-put signals AND one ICP trigger ("we'll build it ourselves"). Triage v4 read the latter as an ICP override. The workforce's reasoning is defensible (Codex specifically flagged this signal as often ICP-related in enterprise SaaS), but the eval rule expected Sales routing.
+
+**Documented fix path for v6:** tighten the ICP override to require *explicit segment naming* (e.g. "enterprise buyers all say we'll build it" not just "buyers say we'll build it"). Codex-B has explicit segment naming and would still route correctly; Direct-Sales does not name a segment and would stay with Sales.
+
+This is the v1 → v2 regression pattern repeating: every new diagnostic rule has a price somewhere else.
+
+### Known limitations (NOT fixed in v5)
 
 Documented in README and codex-review/synthesis.md for transparency:
 
 - **"Pick exactly one specialist" rigidity.** Coupled GTM failures (offer-causes-sales-causes-pricing) get routed to a single specialist.
 - **Verbatim quote-back brittleness.** Triage's "quote the specialist's brief verbatim" depends on the LLM faithfully reproducing text. Relevance AI threading architecture makes this hard to fix.
 - **No retry / circuit-breaker logic.** Malformed specialist output triggers "rerun the workforce" — no auto-retry, no fallback specialist.
+
+---
+
+## [v4] — 2026-05-25 (earlier same day) — Knowledge bases attached
+
+### Added
+
+- 5 specialist knowledge sets (Offer, Leads, Sales, Retention, Pricing) attached as `usage_type: tool`. Each chunked by H2 from Hormozi source material (`$100M Offers`, `$100M Leads`, Lead Playbooks). Total ~80 source-text rows.
+- Specialists can semantically search and pull verbatim passages on demand.
+
+### Result
+
+- **22/25 = 88% — held the v3 score with no regression** after knowledge attachment. Eval batch ID: `52f8ff4a-7317-43c5-9838-42359c9f40d0`.
+- The 3 cross-level-stress-test misses are stylistic (Synthesizer phrasing varies between runs).
+- Confirmed knowledge-base attachment doesn't degrade routing accuracy. Cleared the path for v5's bigger Codex-driven rewrite.
 
 ---
 
