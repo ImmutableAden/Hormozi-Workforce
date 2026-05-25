@@ -1,0 +1,133 @@
+**1. What It Still Feels Like**
+
+It still smells like a framework wrapper: “I uploaded guru content, split it into agents, and made it sound strategic.”
+
+The weak familiar parts:
+
+- “7-agent workforce” risks sounding inflated. If only one specialist runs after triage, reviewers may see a router plus prompt templates.
+- Hormozi branding can feel like borrowed authority.
+- 5 eval cases is tiny. It proves you tuned for five examples, not that the system is robust.
+- LLM-judge scoring is weak proof unless you show the actual rubric and failure modes.
+
+What feels different:
+
+- The refusal-to-answer hook is real. “User asks pricing/sales, system diagnoses upstream offer” is more memorable than another assistant giving advice.
+- The v1/v2/v3 regression story is useful if framed as eval hardening, not prompt fiddling.
+
+**2. Biggest Claim-Proof Gap**
+
+Claim: “diagnostic-first GTM system.”
+
+Proof: “It routed 5 canned cases correctly.”
+
+A real GTM operator will distrust:
+
+- No evidence the diagnosis is correct in the real world.
+- No uncertainty handling. The demo input could be Offer, Sales, ICP, urgency, champion quality, procurement friction, or pipeline source quality.
+- “Perceived Likelihood gap” sounds plausible, but the system needs to show why it ruled out bad sales process, wrong ICP, weak economic buyer access, or non-urgent pain.
+- 88% on 25 LLM-judged rules is not strong. It is bootcamp-valid, not operator-valid.
+
+The missing proof is not more agents. It is a visible diagnostic audit trail: “I considered Sales/Pricing/Leads/Retention, rejected them because X, routed Offer because Y.”
+
+**3. Loom Narrative**
+
+The arc is mostly right, but the attention risk is architecture/explaining too early.
+
+Open with the output, not the system.
+
+Best sequence:
+
+1. Paste the “sales/pricing problem.”
+2. Show Triage refusing the surface answer.
+3. Freeze on the exact line: “Do not cut price yet. This is an Offer / Perceived Likelihood problem.”
+4. Show the rejected paths: why not Sales, why not Pricing, why not Leads.
+5. Show the specialist’s one-week action plan.
+6. Then evals.
+7. Then architecture.
+
+The sit-up moment: not “it routes to Offer.” The sit-up moment is:  
+“Dropping price will probably make this worse because the buyer doesn’t believe the outcome enough yet; reduce perceived risk before reducing price.”
+
+That is sharper than “risk reversal recommended.”
+
+**4. Eval-Driven Iteration**
+
+Do not frame it as “v1 was bad, v2 was also bad, v3 works.”
+
+Frame it as:
+
+“I built adversarial evals around common GTM misdiagnoses. The first version obeyed surface framing. The second overcorrected. The final version added counter-signals so routing became discriminating instead of blindly overriding.”
+
+The key phrase: **failure-mode hardening**.
+
+Show one small table:
+
+- Case
+- Expected route
+- v1 result
+- v2 result
+- v3 result
+- What changed
+
+Do not dwell on 22/25. Dwell on “all 5 routing decisions correct” because routing is the core system behavior.
+
+**5. Hormozi Angle**
+
+Hormozi helps the demo because the Constraint Hierarchy is simple, teachable, and creates a clear routing structure.
+
+It hurts credibility if you make it sound like “Hormozi wisdom bot for SaaS.” That feels unserious to operators.
+
+Make the framework less cultish:
+
+- Say “I used Hormozi’s hierarchy as the diagnostic taxonomy.”
+- Don’t over-index on his name.
+- Don’t show too many quotes.
+- Emphasize the operational behavior: constraint diagnosis, routing, specialist brief, stress test.
+
+The framework is not truly load-bearing. The load-bearing part is: **surface symptom vs root constraint diagnosis**.
+
+**6. What’s Memorable**
+
+Current memory: “Hormozi multi-agent thing.”
+
+Better memory:  
+**“The GTM agent that refuses the obvious answer and routes to the real constraint.”**
+
+That is the sticky line.
+
+In six months, they will not remember 7 agents, 88 source chunks, or 25 eval rules. They may remember: “He built the one that didn’t just answer the user. It challenged the premise.”
+
+**7. What To Cut**
+
+Cut:
+
+- Deep knowledge-base explanation.
+- Most of the architecture diagram.
+- Number of source rows.
+- Long explanation of all 7 agents.
+- Detailed Hormozi background.
+- Anything about H2 chunking unless asked.
+
+Keep:
+
+- The live diagnosis.
+- The rejected surface answer.
+- The specialist output.
+- One eval table.
+- One trace showing Triage → Offer Specialist → Synthesizer.
+
+If you need to cut 2 minutes, kill the architecture tour. Show only enough architecture to prove it is not one prompt.
+
+**8. Blind Spot**
+
+You are overestimating how much “multi-agent” matters.
+
+The judge cares whether the system does something a normal chatbot would not reliably do. The strongest behavior is disciplined misdiagnosis prevention. The weakest behavior is the agent count.
+
+Second blind spot: your demo case is too perfect. It is engineered to land on Offer. A tough reviewer may think you built a maze where you know the exit.
+
+Add one sentence in the Loom:
+
+“I also tested cases where the system should stay with Sales, Pricing, Leads, or Retention, because otherwise this would just be an Offer hammer.”
+
+That protects you from the obvious criticism.

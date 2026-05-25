@@ -1,0 +1,134 @@
+**1. Routing Edge Cases**
+
+**Edge case A: mature leaky bucket with no marketing engine**
+
+Prompt likely misroutes to `LEADS` because of:
+
+> “no marketing engine”  
+> “If TWO+ override-up signals appear AND no stay-put signals, override to RETENTION. Otherwise, route to LEADS.”
+
+Founder prompt:
+
+> We’re a 6-year-old B2B SaaS with 180 customers. NRR is 84%, logo churn is 22%, and support tickets have doubled. We’ve never built a marketing engine; most customers came from founder referrals and partnerships. Pipeline is now drying up, so we’re thinking about hiring SDRs and starting content. Where should we focus?
+
+Correct route: `RETENTION`.
+
+Likely route: `LEADS`, because “no marketing engine” is treated as a stay-put signal even though the company is mature and retention is obviously broken. The stay-put rule is too broad; “no marketing engine” should only protect early-stage companies, not leaky mature ones.
+
+---
+
+**Edge case B: wrong ICP disguised as sales process**
+
+Prompt likely misroutes to `SALES` because of:
+
+> “build vs buy objections — a Sales objection-handling problem and/or ICP issue”  
+> “if override-up signals appear AND any stay-put signal appears, route to SALES”
+
+Founder prompt:
+
+> We sell dev tooling to enterprise security teams. We have strong case studies from startups, but enterprise buyers keep saying they love the demo and ROI, then disappear after security review or say they’ll build internally. Our reps don’t have a consistent playbook, but we’re booking 70 demos/month from outbound. Close rate is 6%. Should we fix sales?
+
+Correct route: probably `OFFER` or `LEADS`, depending on whether the issue is enterprise credibility or wrong ICP.
+
+Likely route: `SALES`, because “case studies,” “ROI accepted,” “build vs buy,” and “weak playbook” all trigger stay-put. But startup case studies do not prove the offer works for enterprise. The rule treats proof as universal when B2B proof is segment-specific.
+
+---
+
+**Edge case C: pricing symptoms caused by delivery model failure**
+
+Prompt likely misroutes to `PRICING` because of:
+
+> “Team is at capacity / capacity-bound”  
+> “Customer-success satisfaction is high”  
+> “If stay-put signals appear, route to PRICING”
+
+Founder prompt:
+
+> We charge $5K/month. Customers say they love us, but every account needs 30 hours/month of custom onboarding and support. CS is at capacity, gross margins are 38%, expansion is rare, and NRR is 91%. Customers say they’d maybe pay more, but only if we keep doing all the manual work. Should we raise prices?
+
+Correct route: `RETENTION` or `OFFER`, because the product is not delivering scalable value and retention economics are weak.
+
+Likely route: `PRICING`, because “capacity-bound” and “customers love us” overpower the fact that the delivery model is broken.
+
+**2. Rule Contradictions**
+
+The hierarchy says:
+
+> “Offer > Leads > Sales > Retention > Pricing”
+
+But the Leads section says:
+
+> “Retention-disguised-as-Leads”  
+> “route to RETENTION instead”
+
+That is not “override-up.” Retention is downstream of Leads in your stated hierarchy. The prompt uses “upstream” conceptually, then violates its own ordering.
+
+The Leads threshold is stricter than Sales for no principled reason:
+
+> Leads: “TWO+ override-up signals … AND no stay-put signals”  
+> Sales: “override-up signals appear AND any stay-put signal appears, route to SALES”
+
+So one stay-put signal can block a Retention route even with multiple retention failures, while one Sales stay-put can block Offer. These are arbitrary confidence thresholds pretending to be diagnostic logic.
+
+The Sales rule is especially overfit to Case 4. This line is dangerous:
+
+> “The break is specifically at proposal-to-close … that’s a CLOSER conversation failure, not an Offer Perceived Likelihood failure”
+
+False in enterprise SaaS. Proposal-to-close can fail because of missing security proof, weak economic buyer value, bad implementation risk, no category urgency, procurement mismatch, or ROI not credible beyond the champion. That is often Offer/ICP, not merely closing.
+
+Pricing has the opposite bias:
+
+> “If stay-put signals appear, route to PRICING”
+
+This lets pricing win too easily. “Capacity-bound” can mean bad onboarding, bad product UX, weak implementation model, or underbuilt CS. It is not automatically value-capture.
+
+**3. Missing Entirely**
+
+No `ICP/positioning` specialist. This is the biggest gap. Many B2B SaaS failures are not Offer, Leads, or Sales in isolation; they are “right product, wrong segment,” “wrong buyer,” “wrong wedge,” or “category narrative unclear.”
+
+No `activation/onboarding` distinction. Retention lumps together churn, usage, support load, expansion, referrals. Those are different failure modes.
+
+No enterprise procurement/security/legal path. “They love it then go quiet” often means security, compliance, legal, procurement, or economic-buyer access. Your prompt collapses that into Offer or Sales.
+
+No implementation/delivery-margin diagnosis. Capacity and CS load are treated as Pricing/Retention symptoms, but in SaaS they may be productization or services dependency problems.
+
+No runway/bandwidth constraint. A founder with 4 months runway cannot be routed the same way as a Series B team. GTM diagnosis without resource constraints can produce unusable advice.
+
+No channel-stage awareness. PLG, founder-led sales, mid-market outbound, enterprise ABM, marketplace-led growth, and partner channels require different routing logic.
+
+No market timing/category demand check. Sometimes no one is buying because the market is not urgent enough, not because the offer copy is weak.
+
+**4. Format Brittleness**
+
+The “Pre-routing scan” forces named signals:
+
+> “scan the user’s input for both override-up and stay-put signals”  
+> “Name what you saw in the diagnosis section”
+
+Real inputs will often be vague:
+
+> “We’re getting interest but not enough revenue. Customers seem happy. Sales feels slow. What should we fix?”
+
+No listed signal cleanly matches. The model will likely infer or manufacture signals because the format demands a scan. If the hard rules require every section, it may turn absence into fake evidence.
+
+The prompt needs an explicit null behavior:
+
+> “If no named signal is present, write ‘No explicit signal matched’ and route based on the strongest concrete evidence only.”
+
+Without that, the agent will over-diagnose. Strict signal-listing plus vague founder input equals confabulated confidence.
+
+**5. Hormozi Mapping Problems**
+
+The load-bearing claim is:
+
+> “A ‘sales problem’ is usually an offer problem. A ‘leads problem’ is usually a retention problem…”
+
+This is too cute for B2B SaaS.
+
+Enterprise GTM is not a simple top-down funnel where Offer gates everything. Sales motion can be the constraint even with a strong offer because consensus creation, procurement navigation, security review, legal, business-case construction, and executive access are part of the product’s route to revenue.
+
+“Leads problem is usually retention because retained customers refer” is especially weak. Referrals are not the dominant growth engine for many B2B SaaS categories. A company can have excellent retention and still have no scalable acquisition channel.
+
+Pricing being last also breaks in SaaS. Pricing/packaging can determine ICP, sales cycle, onboarding burden, expansion motion, and perceived value. It is not merely downstream value capture.
+
+The hierarchy omits ICP. In B2B SaaS, ICP often sits above Offer. A good offer to the wrong buyer looks like bad sales, bad leads, bad pricing, and bad retention all at once. That is the missing root node.

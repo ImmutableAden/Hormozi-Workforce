@@ -1,0 +1,167 @@
+**1. Threading Risk**
+
+`always-create-new` makes the specialist only as good as Triage’s handoff. That breaks on inputs with:
+
+- Mixed symptoms: “pipeline is fine but ACV dropped and churn rose.” Triage picks one level, specialist misses the interaction.
+- Temporal nuance: “this changed after we moved upmarket / changed pricing / hired SDRs.” If Triage omits the timeline, the specialist diagnoses the wrong root cause.
+- Segment nuance: SMB vs midmarket vs enterprise behaving differently. Triage may collapse this into one bottleneck.
+- Ambiguous metrics: “conversion is bad” without stage definitions. Specialist cannot ask clarifying questions unless Triage includes uncertainty.
+- Founder narrative bias: user asks about ads, but buried detail says retention is collapsing. Triage may pass only the ad framing.
+- Multi-product / multi-channel businesses: one route is too lossy.
+- Contradictory facts: Triage may resolve the contradiction silently instead of preserving it.
+
+The specialist cannot recover missing context. The architecture creates an irreversible compression point at Triage.
+
+**2. Verbatim Quote-Back**
+
+This is brittle. You are using a language model as a transport layer.
+
+Failure modes:
+
+- Triage paraphrases despite instruction, especially under token pressure.
+- Triage truncates the specialist brief to fit final output.
+- Triage adds framing that Synthesizer treats as specialist evidence.
+- Markdown/code fences break or nest badly.
+- Quotes get normalized, bullets renumbered, tables mangled.
+- Multi-turn behavior drifts: first run quotes verbatim, later runs “summarize for brevity.”
+- Long specialist outputs cause the most important evidence to be dropped.
+- If the specialist includes caveats, Triage may accidentally weaken or remove them.
+- If the specialist says “do not proceed without X,” Triage/Synthesizer may turn it into softer advice.
+- Character encoding and formatting issues can destroy formulas, dollar values, inequality thresholds, or examples.
+
+This is the wrong abstraction. The specialist output should be passed as structured data or attached state, not re-emitted by another model.
+
+**3. Triage Runs Twice / Autonomy Limit 3**
+
+`autonomy_limit=3` is too tight for a hub doing routing, tool execution, validation, and final packaging.
+
+Likely breakages:
+
+- One tool call plus one malformed response leaves almost no recovery room.
+- If the model emits a partial response before calling the tool, you burn a step.
+- If it calls the wrong specialist first, you have no real correction budget.
+- If the specialist returns weak output, the “retry headroom” is theoretical because the prompt says pick exactly one.
+- The model may treat the specialist response as the final answer and stop before quote-back.
+- `terminate-conversation` makes failures abrupt instead of recoverable.
+
+The architecture relies on exact choreography. Production agents do not reliably maintain choreography under edge cases.
+
+**4. Knowledge As `tool`**
+
+The failure mode is silent generic output.
+
+Specialists may not search because:
+
+- The user sounds familiar enough.
+- The model overestimates its own Hormozi knowledge.
+- The prompt does not force retrieval before diagnosis.
+- The cost-optimized model may choose speed/generic reasoning over tool use.
+- The query formulation may be poor, retrieving irrelevant chunks.
+- The agent may search once, get a bad hit, and proceed anyway.
+
+Always-loaded instructions would be better for canonical primitives that must shape every answer: value equation, Grand Slam Offer mechanics, pricing psychology, lead magnet constraints, sales diagnosis logic, churn/retention concepts. Tool search is better for examples and tactics, not for core doctrine.
+
+If the framework is central to the product promise, relying on optional retrieval undermines the product promise.
+
+**5. Synthesizer Can’t See Knowledge**
+
+Yes, fragile.
+
+The Synthesizer only sees whatever survived:
+
+`Knowledge search → Specialist interpretation → Specialist text → Triage quote-back → Synthesizer interpretation`
+
+Breaks when:
+
+- Specialist uses knowledge but does not cite or explain it.
+- Specialist compresses evidence into vague advice.
+- Triage truncates the source-backed part.
+- Synthesizer challenges the diagnosis without access to the actual supporting doctrine.
+- Synthesizer invents cross-level tests that conflict with the source material.
+- Specialist retrieved a bad chunk and Synthesizer has no way to detect it.
+- Triage warning/failure branches pass through without enough evidence for Synthesizer to do anything useful.
+
+Indirect knowledge visibility is not the same as knowledge access. It is a lossy relay.
+
+**6. Cost-Optimized Model For Routing**
+
+This is the highest-risk cost saving.
+
+Triage is load-bearing. If it routes wrong, every downstream step is polished wrongness. Temperature 0 does not fix weak reasoning; it just makes mistakes consistent.
+
+Routing requires:
+
+- distinguishing symptom from cause,
+- weighing conflicting evidence,
+- handling sparse business context,
+- preserving uncertainty,
+- deciding when not to route,
+- identifying cross-level interactions.
+
+That is exactly where weaker models fail. Use the stronger model for Triage, or make routing deterministic/score-based with explicit evidence extraction. Saving money on the router while paying for five specialists is backwards.
+
+**7. No Retry / Circuit Breaker**
+
+For production, this is not enough.
+
+Problems:
+
+- User gets punished for internal orchestration failure.
+- No automatic retry on transient specialist/tool failure.
+- No fallback to Triage-generated degraded answer.
+- No second-best specialist when confidence is low.
+- No escalation when specialist output is malformed.
+- No duplicate-call protection.
+- No timeout-specific branch.
+- No structured error telemetry.
+- No health checks per specialist.
+- No regression visibility when one specialist starts returning junk.
+
+A 50-word specialist response should trigger automatic retry with stricter instructions, then fallback. “Rerun the workforce” is demo-grade.
+
+**8. “Triage Forbidden From Answering”**
+
+This may be ceremony.
+
+The stronger alternative: Triage is the primary strategist, specialists are optional retrieval/critique tools.
+
+Benefits:
+
+- Fewer handoff failures.
+- Less latency.
+- Lower cost.
+- Better global reasoning across Offer/Leads/Sales/Retention/Pricing.
+- Triage can preserve nuance instead of compressing into one specialist lane.
+- Easier to expose uncertainty and competing diagnoses.
+- No quote-back hack.
+- Synthesizer may become unnecessary.
+
+Current design over-separates diagnosis from recommendation. In GTM strategy, the bottleneck diagnosis and prescription are tightly coupled. Forcing Triage to stay silent can make the system less coherent.
+
+Better pattern:
+
+- Triage extracts facts and scores all five levels.
+- Calls specialists only for high-uncertainty or high-impact areas.
+- Produces final answer itself.
+- Optional Synthesizer acts as critic, not wrapper.
+
+**9. Other Production Breakpoints**
+
+- “Pick ONE specialist” is too rigid. Many GTM failures are coupled: weak offer causes poor leads, poor sales conversion, and pricing resistance.
+- No confidence score means the system hides uncertainty.
+- No clarification path means garbage-in becomes confident garbage-out.
+- No structured schema between agents means every handoff is prose parsing.
+- No evidence ledger means final claims cannot be traced.
+- No metric normalization means agents may reason from undefined terms like CAC, churn, conversion, show rate, close rate.
+- No user/company memory means repeated sessions cannot accumulate context.
+- No eval set means routing quality is unmeasured.
+- No adversarial tests means you do not know which specialist gets over-selected.
+- No observability around tool searches means you cannot tell whether knowledge is actually used.
+- H2-section chunks may be too coarse or too sparse; 8 to 11 rows per domain is thin.
+- Hormozi source material may produce advice that is overconfident, founder-centric, or inappropriate for enterprise SaaS without guardrails.
+- Synthesizer adding “you can’t skip this” language can create false certainty on weak evidence.
+- `terminate-conversation` is hostile for recoverable failures.
+- Temperature 0 across all agents can reduce exploration where multiple plausible diagnoses exist.
+- The final answer can become a stitched artifact: Triage diagnosis, specialist brief, Synthesizer overlay. Users will feel the seams if the parts disagree.
+
+Biggest architectural flaws: prose-as-state-transfer, single-specialist routing, optional knowledge retrieval, weak model on routing, and no automatic recovery.
