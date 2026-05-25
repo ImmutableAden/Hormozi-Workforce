@@ -94,23 +94,15 @@ This script counter-engineers all three.
 
 ---
 
-### 4:00–4:30 — The eval story
+### 4:00–4:55 — How I built this
 
 **[Switch tab to eval results.]**
 
-> "I built this with eval-driven iteration. Eight test cases. Five rules each. The first prompt version missed a case — it routed a retention problem to leads. So I added override signals. Then it over-corrected and missed a sales case. So I added stay-put counterweights. The final version routes all eight correctly. This isn't 'I built it and tested it.' This is 'I built adversarial evals and let them harden the routing.'"
+> "I built this on Relevance AI in one day. Hub-and-spoke architecture: Triage diagnoses, six specialists with Hormozi source-text knowledge bases attached as searchable tools, Synthesizer wraps. The process was eval-driven, not vibe-coded — eight test cases, forty rules, five workforce iterations. Each one driven by a specific eval failure: v1 missed a retention case, v2 over-corrected to Offer, v3 added stay-put signals, v4 attached the knowledge bases, v5 went to Codex CLI for cross-model adversarial review. Codex flagged the missing ICP layer above Hormozi's hierarchy in B2B SaaS — that became the 6th specialist. v5 currently grades 80% with one documented Direct-Sales regression that's the v6 work. Build stack: Relevance AI for the runtime, Claude Code for prompts and workforce config, Codex CLI for the second opinion. Two different model families disagreeing in useful ways."
 
-**[Show the eval results table — 8 cases, all routing correct.]**
+**[Show the eval results table — 8 cases including Codex-A, B, C; highlight the Direct-Sales row honestly.]**
 
-**Why this works (Codex framing):** Reframes v1→v2→v3 as **failure-mode hardening**, not "I broke it twice then fixed it." Key phrase: *"adversarial evals around common GTM misdiagnoses."* That's the bootcamp-relevant insight.
-
----
-
-### 4:30–4:55 — Quick architecture mention (DO NOT linger)
-
-> "Eight agents on Relevance AI. Hub-and-spoke. Triage routes. Six specialists run in parallel threads. Synthesizer wraps. Each specialist has a knowledge base of source-text Hormozi passages they can search on demand. That's it. The story isn't the agent count. The story is that it refuses the obvious answer and routes to the real constraint."
-
-**Why this works:** Architecture in 25 seconds, max. Codex was emphatic: don't dwell. The judge already saw the demo work.
+**Why this works (Codex framing):** Names the stack (Relevance AI + Claude Code + Codex), the process (eval-driven, cross-model adversarial review), the architecture (hub-and-spoke + knowledge tools), and the honest state (one known regression). Reframes v1→v5 as **failure-mode hardening**, not "I broke it twice then fixed it." Architecture is one breath, never a tour — Codex was emphatic on that. The bootcamp-relevant insight is the build discipline, not the agent count. Mentioning the Direct-Sales regression on camera is the move that separates this from a polished demo — judges notice when a builder owns the gap instead of hiding it.
 
 ---
 
@@ -122,10 +114,10 @@ This script counter-engineers all three.
 
 ## What to cut if you have to cut
 
-Codex's cut priority (most expendable first):
-1. **The architecture tour (4:30–4:55)** — if you're over time, drop it entirely. The judge will infer architecture from what they saw.
-2. **The Synthesizer wrap (3:30–4:00)** — keep "What to do this week" if you can; cut the cross-level stress tests if needed.
-3. **The eval story (4:00–4:30)** — if cut, save 30 seconds. Risk: loses the bootcamp-relevant "I tested it adversarially" angle. Cut last.
+Cut priority (most expendable first):
+1. **The Synthesizer wrap (3:30–4:00)** — keep "What to do this week" if you can; cut the cross-level stress tests if needed.
+2. **Trim "How I built this" (4:00–4:55)** — if over time, drop the build-stack sentence (last line) first; drop the architecture sentence second. Keep the eval-driven process beat and the Codex cross-model review beat — those are the bootcamp signal.
+3. **The "How I built this" section as a whole** — only cut if you absolutely must. You lose the build-discipline angle, which is the thing that distinguishes this from a polished demo. Cut last.
 
 What you absolutely cannot cut:
 - The diagnosis moment (0:20–1:30)
@@ -147,7 +139,7 @@ Codex feedback: this is what judges remember in 6 months. The "8-agent Hormozi w
 
 - "I'm passionate about AI" or any variant
 - "This was a fun project"
-- Anything about agent count, source-text chunk count, knowledge-base size, or the 88% eval score *as a percentage*
+- Stat-puffery: leading with agent count, source-text chunk count, knowledge-base row count, or "88%" as an opening hook (judges skim raw numbers; lead with what the thing *does*). It's fine to state a score when it's tied to a specific story — "v5 grades 80% with one documented regression" works because the regression *is* the story
 - Hormozi quotes or framework recitations
 - Any version of "this could be the next ChatGPT"
 - "Multi-agent orchestration" without immediately tying it to the user outcome
